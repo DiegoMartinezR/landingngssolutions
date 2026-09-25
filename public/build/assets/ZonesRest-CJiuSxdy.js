@@ -1,0 +1,1 @@
+var o=Object.defineProperty;var i=(e,s,a)=>s in e?o(e,s,{enumerable:!0,configurable:!0,writable:!0,value:a}):e[s]=a;var t=(e,s,a)=>(i(e,typeof s!="symbol"?s+"":s,a),a);import{B as n}from"./Results-aaXCWgzC.js";class p extends n{constructor(){super(...arguments);t(this,"path","admin/zones");t(this,"hasFiles",!0)}}export{p as Z};

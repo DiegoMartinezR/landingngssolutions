@@ -1,0 +1,103 @@
+<table style="background-color: #f0f2f5; margin: 0; padding: 0;" border="0" width="100%" cellspacing="0" cellpadding="0">
+    <tbody>
+    <tr>
+    <td style="padding: 30px 0;" align="center">
+    <table style="background-color: #ffffff; border-radius: 20px; overflow: hidden; border-collapse: separate;" border="0" width="600" cellspacing="0" cellpadding="0"><!-- Header -->
+    <tbody>
+    <tr>
+    <td style="background-color: #96263e; padding: 30px 30px 20px;" align="center"><img src="https://quiroinnova.mundoweb.pe/assets/img/logo-white.png" alt="Quiroinnova" style="display: block; margin: 0 auto;" width="250"></td>
+    </tr>
+    <!-- Body -->
+    <tr>
+    <td style="padding: 40px 35px; font-family: 'Segoe UI', Arial, sans-serif; color: #2c3e50;">
+    <h2 style="color: #96263e; font-size: 28px; font-weight: 600; margin: 0 0 10px 0;">¡Hola, {{ name }}!</h2>
+    <p style="font-size: 18px; color: #4a5568; margin: 0 0 25px 0;">Gracias por contactarnos. Hemos recibido tu solicitud para agendar una cita y nuestro equipo te contactará <span style="color: #b4d121; font-weight: 600;">en breve por WhatsApp</span>.</p>
+    <hr style="border: none; border-top: 2px solid #e9eef2; margin: 30px 0;">
+    <h3 style="color: #96263e; font-size: 20px; font-weight: 600; margin: 0 0 20px 0;">Detalles de la reserva</h3>
+    <!-- Details Container -->
+    <div style="background-color: #f9fafc; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0;">
+
+    {{#service_title}}
+    <table style="border-collapse: collapse;" border="0" width="100%" cellspacing="0" cellpadding="0">
+    <tbody>
+    <tr>
+    <td style="padding: 14px 18px; font-weight: 600; color: #96263e; background-color: #f8f9fa; border-bottom: 1px solid #e2e8f0; font-family: 'Segoe UI', Arial, sans-serif;" width="38%">Motivo de consulta</td>
+    <td style="padding: 14px 18px; color: #1e293b; background-color: #ffffff; border-bottom: 1px solid #e2e8f0; font-family: 'Segoe UI', Arial, sans-serif;">{{ service_title }}</td>
+    </tr>
+    </tbody>
+    </table>
+    {{/service_title}}
+
+    {{#facility_title}}
+    <table style="border-collapse: collapse;" border="0" width="100%" cellspacing="0" cellpadding="0">
+    <tbody>
+    <tr>
+    <td style="padding: 14px 18px; font-weight: 600; color: #96263e; background-color: #f8f9fa; border-bottom: 1px solid #e2e8f0; font-family: 'Segoe UI', Arial, sans-serif;" width="38%">Sede seleccionada</td>
+    <td style="padding: 14px 18px; color: #1e293b; background-color: #ffffff; border-bottom: 1px solid #e2e8f0; font-family: 'Segoe UI', Arial, sans-serif;">{{ facility_title }}</td>
+    </tr>
+    </tbody>
+    </table>
+    {{/facility_title}}
+
+    {{#email}}
+    <table style="border-collapse: collapse;" border="0" width="100%" cellspacing="0" cellpadding="0">
+    <tbody>
+    <tr>
+    <td style="padding: 14px 18px; font-weight: 600; color: #96263e; background-color: #f8f9fa; border-bottom: 1px solid #e2e8f0; font-family: 'Segoe UI', Arial, sans-serif;" width="38%">Correo electrónico</td>
+    <td style="padding: 14px 18px; color: #1e293b; background-color: #ffffff; border-bottom: 1px solid #e2e8f0; font-family: 'Segoe UI', Arial, sans-serif;">{{ email }}</td>
+    </tr>
+    </tbody>
+    </table>
+    {{/email}}
+
+    {{#number}}
+    <table style="border-collapse: collapse;" border="0" width="100%" cellspacing="0" cellpadding="0">
+    <tbody>
+    <tr>
+    <td style="padding: 14px 18px; font-weight: 600; color: #96263e; background-color: #f8f9fa; border-bottom: 1px solid #e2e8f0; font-family: 'Segoe UI', Arial, sans-serif;" width="38%">Teléfono / WhatsApp</td>
+    <td style="padding: 14px 18px; color: #1e293b; background-color: #ffffff; border-bottom: 1px solid #e2e8f0; font-family: 'Segoe UI', Arial, sans-serif;">{{ number }}</td>
+    </tr>
+    </tbody>
+    </table>
+    {{/number}}
+
+    </div>
+
+    {{#description}}
+    <table style="margin-top: 30px; background-color: #fff9fa; border-left: 6px solid #b4d121; border-radius: 12px; border-collapse: separate;" border="0" width="100%" cellspacing="0" cellpadding="0">
+    <tbody>
+    <tr>
+    <td style="padding: 20px 25px; font-family: 'Segoe UI', Arial, sans-serif;"><strong style="color: #96263e; font-size: 16px; display: block; margin-bottom: 10px; text-transform: uppercase;">Mensaje adicional</strong>
+    <p style="margin: 0; font-size: 16px; color: #2d3748;">{{ description }}</p>
+    </td>
+    </tr>
+    </tbody>
+    </table>
+    {{/description}}
+
+    <table style="margin-top: 35px;" border="0" width="100%" cellspacing="0" cellpadding="0">
+    <tbody>
+    <tr>
+    <td style="font-family: 'Segoe UI', Arial, sans-serif; color: #5f6b7a;" align="center">
+    <p style="margin: 0;">Si necesitas modificar algún detalle, puedes responder directamente a este correo.</p>
+    </td>
+    </tr>
+    </tbody>
+    </table>
+    </td>
+    </tr>
+    <!-- Footer -->
+    <tr>
+    <td style="background-color: #f8fafc; padding: 25px; border-top: 1px solid #e2e8f0; font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; color: #5f6b7a;" align="center">
+    <p style="margin: 5px 0;">&copy; 2026 Quiroinnova Centro Quiropráctico. Todos los derechos reservados.</p>
+    <p style="margin: 5px 0;">{{#support_email}} <a style="color: #96263e; text-decoration: none; font-weight: 500;" href="mailto:{{ support_email }}">Escríbenos</a> | {{/support_email}} {{#support_phone}} <a style="color: #96263e; text-decoration: none; font-weight: 500;" href="tel:{{ support_phone }}">Llámanos</a> {{/support_phone}}</p>
+    {{#address_contact}}
+    <p style="font-size: 12px; margin: 15px 0 0 0;">{{ address_contact }}</p>
+    {{/address_contact}}</td>
+    </tr>
+    </tbody>
+    </table>
+    </td>
+    </tr>
+    </tbody>
+    </table>
