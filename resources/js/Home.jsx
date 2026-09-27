@@ -565,10 +565,10 @@ const Home = ({
                     scrollToSection={scrollToSection}
                 />
 
-                {/* Hero Section with recommended responsive height (does NOT take full viewport height) */}
+                {/* Hero Section - 100% height on tablet and desktop */}
                 <section
                     id="consulta"
-                    className="relative w-full md:min-h-[520px] lg:h-[680px] xl:h-[620px] 2xl:h-[660px] flex items-center md:flex-col md:justify-center bg-brand-dark overflow-hidden pt-20 sm:pt-24 md:pt-20 lg:pt-24 pb-8 sm:pb-10 md:pb-6"
+                    className="relative w-full md:h-screen md:min-h-screen flex items-center md:flex-col md:justify-center bg-brand-dark overflow-hidden pt-20 sm:pt-24 md:pt-20 lg:pt-24 pb-8 sm:pb-10 md:pb-8"
                 >
                     {/* Hero Background Video / Image - Seamless on both Mobile & Desktop */}
                     <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
@@ -600,7 +600,7 @@ const Home = ({
                                         muted
                                         playsInline
                                         preload="auto"
-                                        className="w-full h-full object-cover opacity-60 pointer-events-none"
+                                        className="w-full h-full object-cover opacity-100 pointer-events-none"
                                     />
                                 );
                             }
@@ -630,12 +630,12 @@ const Home = ({
                                     muted
                                     playsInline
                                     preload="auto"
-                                    className="w-full h-full object-cover opacity-60 pointer-events-none"
+                                    className="w-full h-full object-cover opacity-100 pointer-events-none"
                                 />
                             );
                         })()}
                         {/* Overlay para legibilidad del contenido */}
-                        <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/85 via-brand-dark/20 to-brand-dark pointer-events-none"></div>
+                        <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/60 via-brand-dark/10 to-brand-dark/70 pointer-events-none"></div>
                     </div>
 
                     <div className="relative z-10 max-w-[1400px] w-full mx-auto px-4 sm:px-6 md:px-12 grid lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-14 items-center">
@@ -1456,7 +1456,7 @@ const Home = ({
                                                         >
                                                             {/* Main White Card Inner */}
                                                             <div
-                                                                className="bg-white rounded-tr-[23px] rounded-bl-[23px] p-6 sm:p-7 flex flex-col justify-between h-[410px] sm:h-[430px]"
+                                                                className="bg-white rounded-tr-[23px] rounded-bl-[23px] p-6 sm:p-7 flex flex-col justify-between h-[470px] sm:h-[490px]"
                                                                 style={{
                                                                     clipPath:
                                                                         "polygon(21px 0%, 100% 0%, 100% calc(100% - 23px), calc(100% - 23px) 100%, 0% 100%, 0% 21px)",
@@ -1472,11 +1472,11 @@ const Home = ({
                                                                 </div>
 
                                                                 {/* Product Image Area */}
-                                                                <div className="flex-1 flex items-center justify-center p-3 my-2 min-h-[190px]">
+                                                                <div className="flex-1 flex items-center justify-center p-1 my-2 min-h-[245px] sm:min-h-[265px]">
                                                                     <img
                                                                         src={imageSrc}
                                                                         alt={item.name}
-                                                                        className="max-h-[180px] sm:max-h-[195px] w-auto max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                                                                        className="max-h-[235px] sm:max-h-[255px] w-auto max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
                                                                         onError={(e) => {
                                                                             e.target.src =
                                                                                 "/assets/img/seguridad.webp";
