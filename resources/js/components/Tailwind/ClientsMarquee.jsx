@@ -343,7 +343,7 @@ const PlatanitosLogo = ({ className = "h-9 sm:h-10" }) => (
 );
 
 // --- Dual Marquee Component ---
-const ClientsMarquee = ({ title, core_values = [], certifications = [] }) => {
+const ClientsMarquee = ({ title, core_values = [], certifications = [], className = "" }) => {
     // Default mockup logos fallback if no dynamic data
     const defaultRow1 = [
         { name: "Aruma", component: <ArumaLogo /> },
@@ -406,7 +406,7 @@ const ClientsMarquee = ({ title, core_values = [], certifications = [] }) => {
     return (
         <section
             id="clientes"
-            className="py-12 sm:py-16 md:py-20 bg-transparent relative w-full overflow-hidden select-none"
+            className={`py-12 sm:py-16 md:py-20 bg-white relative w-full overflow-hidden select-none ${className}`}
         >
             {/* CSS Keyframe animations for seamless 60fps infinite marquee */}
             <style>{`

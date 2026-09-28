@@ -228,7 +228,7 @@ const Home = ({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [activeServiceIdx, setActiveServiceIdx] = useState(0);
-    const [selectedServiceIdx, setSelectedServiceIdx] = useState(null);
+    const [serviceDirection, setServiceDirection] = useState(1);
     const [productSwiper, setProductSwiper] = useState(null);
     const isMobile = useIsMobile();
     const [loadVideo, setLoadVideo] = useState(true);
@@ -873,133 +873,33 @@ const Home = ({
                 </section>
 
 
-                {/* Dynamic Indicators bottom band - Modern High-Fidelity Cards (Design Proposal) */}
-                <section className="bg-white py-12 sm:py-14 lg:py-16 px-4 sm:px-6 md:px-12 w-full relative">
-                    <div className="max-w-[1400px] mx-auto relative z-10">
-                        {/* Indicators Container */}
-                        {indicatorsList && indicatorsList.length <= 4 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-5 xl:gap-12">
-                                {indicatorsList.map((ind, idx) => {
-                                    const proposalSvgIcons = [
-                                        { src: "/assets/img/escudo.svg", alt: "Escudo y Protección" },
-                                        { src: "/assets/img/ubicacion.svg", alt: "Ubicación y Cobertura" },
-                                        { src: "/assets/img/precision.svg", alt: "Precisión y Detección" },
-                                        { src: "/assets/img/soporte.svg", alt: "Soporte Especializado" },
-                                    ];
-
-                                    const renderProposalIcon = (index) => {
-                                        const icon = proposalSvgIcons[index % proposalSvgIcons.length];
-                                        return (
-                                            <img
-                                                src={icon.src}
-                                                alt={ind.name || icon.alt}
-                                                className="w-8 h-8 sm:w-9 sm:h-9 object-contain select-none pointer-events-none"
-                                            />
-                                        );
-                                    };
-
-                                    return (
-                                        <div
-                                            key={idx}
-                                            className="w-full max-w-[320px] lg:max-w-none mx-auto bg-white rounded-[26px] sm:rounded-[30px] p-7 sm:p-8 xl:p-9 border border-[#e8f1f5] shadow-[0_4px_20px_rgba(0,0,0,0.03)] shadow-[0_8px_25px_rgba(12,35,49,0.06)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col items-center text-center justify-between group min-h-[250px]"
-                                        >
-                                            {/* Circular Icon Badge */}
-                                            <div className="w-16 h-16 sm:w-[70px] sm:h-[70px] rounded-full bg-[#eaf4fb] border border-[#d6ecf7] flex items-center justify-center mb-6 sm:mb-7 transition-transform duration-300 group-hover:scale-105 shrink-0 shadow-none">
-                                                {renderProposalIcon(idx)}
-                                            </div>
-
-                                            {/* Metrics Number & Description */}
-                                            <div className="flex flex-col items-center flex-1 justify-center w-full">
-                                                <h3 className="font-brinnan text-3xl sm:text-4xl lg:text-[2.35rem] xl:text-[2.5rem] font-bold text-[#0c2331] tracking-tight mb-2 sm:mb-2.5 leading-tight">
-                                                    {ind.name}
-                                                </h3>
-
-                                                <p className="text-[15px] sm:text-[16px] font-normal text-[#486581] leading-relaxed max-w-[240px] mx-auto">
-                                                    {ind.description}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        ) : (
-                            <Swiper
-                                modules={[Autoplay]}
-                                slidesPerView={1}
-                                loop={true}
-                                autoplay={{
-                                    delay: 4500,
-                                    disableOnInteraction: false,
-                                }}
-                                className="w-full pb-4"
-                            >
-                                {Array.from({ length: Math.ceil((indicatorsList?.length || 0) / 4) }, (_, i) => indicatorsList.slice(i * 4, i * 4 + 4)).map((chunk, slideIdx) => (
-                                    <SwiperSlide key={slideIdx} className="h-auto">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7 xl:gap-8 w-full">
-                                            {chunk.map((ind, idx) => {
-                                                const globalIdx = slideIdx * 4 + idx;
-                                                const proposalSvgIcons = [
-                                                    { src: "/assets/img/escudo.svg", alt: "Escudo y Protección" },
-                                                    { src: "/assets/img/ubicacion.svg", alt: "Ubicación y Cobertura" },
-                                                    { src: "/assets/img/precision.svg", alt: "Precisión y Detección" },
-                                                    { src: "/assets/img/soporte.svg", alt: "Soporte Especializado" },
-                                                ];
-
-                                                const renderProposalIcon = (index) => {
-                                                    const icon = proposalSvgIcons[index % proposalSvgIcons.length];
-                                                    return (
-                                                        <img
-                                                            src={icon.src}
-                                                            alt={ind.name || icon.alt}
-                                                            className="w-8 h-8 sm:w-9 sm:h-9 object-contain select-none pointer-events-none"
-                                                        />
-                                                    );
-                                                };
-
-                                                return (
-                                                    <div
-                                                        key={idx}
-                                                        className="w-full max-w-[320px] lg:max-w-none mx-auto bg-white rounded-[26px] sm:rounded-[30px] p-7 sm:p-8 xl:p-9 border border-[#e8f1f5] shadow-[0_4px_20px_rgba(0,0,0,0.03)] shadow-[0_8px_25px_rgba(12,35,49,0.06)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col items-center text-center justify-between group min-h-[250px]"
-                                                    >
-                                                        <div className="w-16 h-16 sm:w-[70px] sm:h-[70px] rounded-full bg-[#eaf4fb] border border-[#d6ecf7] flex items-center justify-center mb-6 sm:mb-7 transition-transform duration-300 group-hover:scale-105 shrink-0 shadow-none">
-                                                            {renderProposalIcon(globalIdx)}
-                                                        </div>
-
-                                                        <div className="flex flex-col items-center flex-1 justify-center w-full">
-                                                            <h3 className="font-brinnan text-3xl sm:text-4xl lg:text-[2.35rem] xl:text-[2.5rem] font-bold text-[#0c2331] tracking-tight mb-2 sm:mb-2.5 leading-tight">
-                                                                {ind.name}
-                                                            </h3>
-
-                                                            <p className="text-[15px] sm:text-[16px] font-normal text-[#486581] leading-relaxed max-w-[240px] mx-auto">
-                                                                {ind.description}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-                                        </div>
-                                    </SwiperSlide>
-                                ))}
-                            </Swiper>
-                        )}
-                    </div>
-                </section>
+                {/* Clientes que confiaron - Marquesina doble */}
+                <ClientsMarquee
+                    title={
+                        <FormattedText
+                            text={aliados?.title || "Empresas que *confían en nosotros*"}
+                            boldClassName="font-bold text-brand-main"
+                        />
+                    }
+                    core_values={core_values}
+                    certifications={certifications}
+                />
 
 
 
 
-                {/* Interactive Services Carousel */}
+                {/* Soluciones Tecnológicas Antihurto - Carrusel Detallado */}
                 {servicesList && servicesList.length > 0 && (
                     <section
                         id="sectores"
-                        className="pb-12 pt-8 px-4 sm:px-6 md:px-12 bg-white relative w-full"
+                        className="pb-16 pt-8 px-4 sm:px-6 md:px-12 bg-white relative w-full"
                     >
                         <div className="max-w-[1400px] mx-auto px-4 md:px-12 outline-none focus:outline-none">
                             {/* Section Header */}
                             <ScrollReveal
                                 direction="up"
                                 staggerDelay={0.15}
-                                className="flex flex-col mb-10 md:mb-14 gap-4"
+                                className="flex flex-col mb-8 md:mb-12 gap-4"
                             >
                                 <div className="max-w-4xl">
                                     <h2 className="font-brinnan text-3xl sm:text-4xl md:text-5xl font-light text-brand-dark tracking-tight leading-tight">
@@ -1014,259 +914,221 @@ const Home = ({
                                 </div>
                             </ScrollReveal>
 
-                            {/* Service Cards Grid */}
-                            <AnimatePresence mode="wait">
-                                {selectedServiceIdx === null ? (
-                                    <motion.div
-                                        key="cards-grid"
-                                        initial={{ opacity: 0, y: 30 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -20 }}
-                                        transition={{ duration: 0.4, ease: "easeOut" }}
-                                    >
-                                        <ScrollReveal direction="up" staggerDelay={0.15}>
-                                            {/* Swiper Carousel - 3 items on desktop */}
-                                            <Swiper
-                                                modules={[Autoplay]}
-                                                spaceBetween={isMobile ? 20 : 40}
-                                                slidesPerView={1.1}
-                                                centeredSlides={isMobile}
-                                                autoplay={{ delay: 5000, disableOnInteraction: true }}
-                                                breakpoints={{
-                                                    640: { slidesPerView: 1.5, spaceBetween: 28 },
-                                                    768: { slidesPerView: 2.2, spaceBetween: 32 },
-                                                    1024: { slidesPerView: 3, spaceBetween: 40 },
-                                                    1280: { slidesPerView: 3, spaceBetween: 48 },
-                                                }}
-                                                className="pb-4 !overflow-visible"
-                                            >
-                                                {servicesList.map((service, idx) => (
-                                                    <SwiperSlide key={idx} className="h-auto">
-                                                        <div
-                                                            className="group cursor-pointer h-full"
-                                                            onClick={() => {
-                                                                setActiveServiceIdx(idx);
-                                                                setSelectedServiceIdx(idx);
-                                                            }}
-                                                        >
-                                                            <div className="relative h-[360px] sm:h-[380px] lg:h-[420px] xl:h-[440px] rounded-[24px] overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_40px_rgba(0,0,0,0.12)] transition-all duration-500 group-hover:-translate-y-1">
-                                                                {/* Image */}
-                                                                <img
-                                                                    src={service.image ? `/api/service/media/${service.image}` : '/api/cover/thumbnail/null'}
-                                                                    alt={service.title}
-                                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                                                    onError={(e) => (e.target.src = '/api/cover/thumbnail/null')}
-                                                                />
-                                                                {/* Deep Oceanic Slate Gradient Overlay from Reference Design */}
-                                                                <div
-                                                                    className="absolute inset-0 pointer-events-none transition-opacity duration-500"
-                                                                    style={{
-                                                                        background:
-                                                                            'linear-gradient(180deg, rgba(25, 53, 77, 0) 32%, rgba(25, 53, 77, 0.42) 52%, rgba(25, 53, 77, 0.88) 72%, #19354d 95%)',
-                                                                    }}
-                                                                />
+                            {/* Detail Carousel View */}
+                            <div className="relative w-full">
+                                {/* Desktop/Tablet Navigation Buttons */}
+                                <button
+                                    onClick={() => {
+                                        setServiceDirection(-1);
+                                        setActiveServiceIdx(
+                                            (p) =>
+                                                (p - 1 + servicesList.length) %
+                                                servicesList.length,
+                                        );
+                                    }}
+                                    className="hidden md:flex absolute -left-5 lg:-left-12 top-1/2 -translate-y-1/2 z-30 w-11 h-11 md:w-13 md:h-13 rounded-full bg-[#19354d] text-white items-center justify-center shadow-[0_4px_18px_rgba(25,53,77,0.35)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer"
+                                    aria-label="Anterior solución"
+                                >
+                                    <ArrowLeft
+                                        size={22}
+                                        strokeWidth={2.2}
+                                        className="text-white group-hover:-translate-x-0.5 transition-transform duration-300"
+                                    />
+                                </button>
 
-                                                                {/* Content overlay - title at bottom left */}
-                                                                <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-7 pr-28 sm:pr-32 z-10 pointer-events-none">
-                                                                    <h3 className="font-brinnan text-white text-lg sm:text-xl font-medium leading-snug drop-shadow-sm">
-                                                                        {service.title}
-                                                                    </h3>
+                                <button
+                                    onClick={() => {
+                                        setServiceDirection(1);
+                                        setActiveServiceIdx(
+                                            (p) => (p + 1) % servicesList.length,
+                                        );
+                                    }}
+                                    className="hidden md:flex absolute -right-5 lg:-right-12 top-1/2 -translate-y-1/2 z-30 w-11 h-11 md:w-13 md:h-13 rounded-full bg-[#19354d] text-white items-center justify-center shadow-[0_4px_18px_rgba(25,53,77,0.35)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer"
+                                    aria-label="Siguiente solución"
+                                >
+                                    <ArrowRight
+                                        size={22}
+                                        strokeWidth={2.2}
+                                        className="text-white group-hover:translate-x-0.5 transition-transform duration-300"
+                                    />
+                                </button>
+
+                                <div className="relative min-h-[590px] sm:min-h-[580px] lg:h-[600px] xl:h-[620px] w-full flex items-center justify-center perspective-1000 px-1 sm:px-4 md:px-8">
+                                    <AnimatePresence mode="popLayout" custom={serviceDirection}>
+                                        {servicesList.map((service, idx) => {
+                                            if (idx !== activeServiceIdx) return null;
+                                            return (
+                                                <motion.div
+                                                    key={idx}
+                                                    custom={serviceDirection}
+                                                    initial={{
+                                                        opacity: 0,
+                                                        x: serviceDirection > 0 ? 140 : -140,
+                                                        scale: 0.96,
+                                                        filter: "blur(12px)",
+                                                    }}
+                                                    animate={{
+                                                        opacity: 1,
+                                                        x: 0,
+                                                        scale: 1,
+                                                        filter: "blur(0px)",
+                                                    }}
+                                                    exit={{
+                                                        opacity: 0,
+                                                        x: serviceDirection > 0 ? -140 : 140,
+                                                        scale: 0.96,
+                                                        filter: "blur(12px)",
+                                                    }}
+                                                    transition={{
+                                                        duration: 0.4,
+                                                        ease: "circOut",
+                                                    }}
+                                                    className="absolute inset-0 w-full h-full"
+                                                >
+                                                    <div className="bg-white/90 backdrop-blur-3xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-[#e8f1f5] rounded-[24px] sm:rounded-[30px] md:rounded-[40px] overflow-hidden w-full h-full flex flex-col lg:flex-row relative group">
+                                                        {/* Image half */}
+                                                        <div className="w-full lg:w-1/2 h-[150px] sm:h-[220px] lg:h-full shrink-0 relative overflow-hidden bg-gray-100">
+                                                            <img
+                                                                src={
+                                                                    service.image
+                                                                        ? (service.image.startsWith("http") ||
+                                                                          service.image.startsWith("/")
+                                                                            ? service.image
+                                                                            : `/api/service/media/${service.image}`)
+                                                                        : "/api/cover/thumbnail/null"
+                                                                }
+                                                                alt={service.title}
+                                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                                                                onError={(e) =>
+                                                                    (e.target.src =
+                                                                        "/api/cover/thumbnail/null")
+                                                                }
+                                                            />
+                                                            <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent lg:hidden" />
+                                                        </div>
+
+                                                        {/* Content half */}
+                                                        <div className="w-full lg:w-1/2 p-4 sm:p-6 md:p-8 lg:p-12 xl:p-16 flex flex-col justify-between sm:justify-center overflow-y-auto">
+                                                            <div>
+                                                                <div className="inline-flex items-center gap-2 mb-1.5 sm:mb-2">
+                                                                    <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-brand-main bg-brand-main/10 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full">
+                                                                        Solución {idx + 1} de {servicesList.length}
+                                                                    </span>
                                                                 </div>
 
-                                                                {/* Bottom-right smooth curved notch cutout */}
-                                                                <svg
-                                                                    className="absolute bottom-0 right-0 w-[90px] h-[90px] sm:w-[100px] sm:h-[100px] pointer-events-none z-10"
-                                                                    viewBox="0 0 80 80"
-                                                                    fill="#ffffff"
-                                                                >
-                                                                    <path d="M 0 80 A 18 18 0 0 0 18 62 A 44 44 0 0 1 62 18 A 18 18 0 0 0 80 0 L 80 80 Z" />
-                                                                </svg>
+                                                                <h3 className="font-brinnan text-lg sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-light text-gray-900 mb-1.5 sm:mb-3 md:mb-4 leading-snug sm:leading-tight">
+                                                                    {service.title}
+                                                                </h3>
+                                                                <p className="text-gray-600 text-[13px] sm:text-base md:text-lg font-light leading-relaxed mb-3 sm:mb-5 md:mb-8">
+                                                                    {service.description}
+                                                                </p>
 
-                                                                {/* Circular action button */}
-                                                                <div className="absolute bottom-2.5 right-2.5 sm:bottom-3 sm:right-3 z-20 pointer-events-none">
-                                                                    <div className="w-[44px] h-[44px] sm:w-[48px] sm:h-[48px] rounded-full bg-[#19354d] flex items-center justify-center text-white shadow-[0_2px_10px_rgba(25,53,77,0.25)] transition-all duration-300 group-hover:scale-105 group-hover:bg-[#12283a]">
-                                                                        <ArrowRight
-                                                                            size={20}
-                                                                            strokeWidth={2.2}
-                                                                            className="text-white transition-transform duration-300 group-hover:translate-x-0.5"
-                                                                        />
+                                                                {service.characteristics?.length >
+                                                                    0 && (
+                                                                    <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 md:mb-8">
+                                                                        {service.characteristics.map(
+                                                                            (char, i) => (
+                                                                                <div
+                                                                                    key={i}
+                                                                                    className="flex items-start gap-2.5 sm:gap-3"
+                                                                                >
+                                                                                    <CheckCircle2
+                                                                                        size={16}
+                                                                                        className="text-brand-main mt-0.5 shrink-0 sm:w-[18px] sm:h-[18px]"
+                                                                                    />
+                                                                                    <span className="text-gray-700 font-medium text-xs sm:text-sm leading-tight sm:leading-normal">
+                                                                                        {char}
+                                                                                    </span>
+                                                                                </div>
+                                                                            ),
+                                                                        )}
                                                                     </div>
-                                                                </div>
+                                                                )}
+                                                            </div>
+
+                                                            <div className="flex flex-wrap justify-start gap-4 pt-1 sm:pt-0">
+                                                                <a
+                                                                    href="#consulta"
+                                                                    onClick={(e) => {
+                                                                        e.preventDefault();
+                                                                        scrollToTop();
+                                                                    }}
+                                                                    className="bg-brand-accent uppercase text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-full font-semibold hover:scale-105 duration-300 transition-all w-full sm:w-max justify-center text-xs sm:text-sm tracking-wide shadow-md flex items-center gap-2"
+                                                                >
+                                                                    Solicitar Cotización{" "}
+                                                                    <ArrowRight size={16} />
+                                                                </a>
                                                             </div>
                                                         </div>
-                                                    </SwiperSlide>
-                                                ))}
-                                            </Swiper>
-                                        </ScrollReveal>
-                                    </motion.div>
-                                ) : (
-                                    /* Detail Carousel View */
-                                    <motion.div
-                                        key="detail-view"
-                                        initial={{ opacity: 0, scale: 0.95 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        exit={{ opacity: 0, scale: 0.95 }}
-                                        transition={{ duration: 0.4, ease: "easeOut" }}
+                                                    </div>
+                                                </motion.div>
+                                            );
+                                        })}
+                                    </AnimatePresence>
+                                </div>
+
+                                {/* Mobile Navigation Controls (Arrows + Dots) */}
+                                <div className="flex md:hidden items-center justify-between w-full max-w-[280px] mx-auto mt-6">
+                                    <button
+                                        onClick={() => {
+                                            setServiceDirection(-1);
+                                            setActiveServiceIdx((p) => (p - 1 + servicesList.length) % servicesList.length);
+                                        }}
+                                        className="w-10 h-10 rounded-full bg-[#19354d] text-white flex items-center justify-center shadow-[0_4px_12px_rgba(25,53,77,0.25)] active:scale-95 transition-all cursor-pointer"
+                                        aria-label="Anterior solución"
                                     >
-                                        {/* Back Button */}
+                                        <ArrowLeft size={18} strokeWidth={2.2} />
+                                    </button>
+
+                                    <div className="flex items-center gap-2">
+                                        {servicesList.map((s, i) => (
+                                            <button
+                                                key={i}
+                                                onClick={() => {
+                                                    setServiceDirection(i > activeServiceIdx ? 1 : -1);
+                                                    setActiveServiceIdx(i);
+                                                }}
+                                                aria-label={`Ver solución ${i + 1}: ${s.title}`}
+                                                className={`transition-all duration-300 rounded-full cursor-pointer ${
+                                                    activeServiceIdx === i
+                                                        ? "w-7 h-2.5 bg-brand-main"
+                                                        : "w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400"
+                                                }`}
+                                            />
+                                        ))}
+                                    </div>
+
+                                    <button
+                                        onClick={() => {
+                                            setServiceDirection(1);
+                                            setActiveServiceIdx((p) => (p + 1) % servicesList.length);
+                                        }}
+                                        className="w-10 h-10 rounded-full bg-[#19354d] text-white flex items-center justify-center shadow-[0_4px_12px_rgba(25,53,77,0.25)] active:scale-95 transition-all cursor-pointer"
+                                        aria-label="Siguiente solución"
+                                    >
+                                        <ArrowRight size={18} strokeWidth={2.2} />
+                                    </button>
+                                </div>
+
+                                {/* Desktop Pagination Dots */}
+                                <div className="hidden md:flex justify-center items-center gap-2 mt-8">
+                                    {servicesList.map((s, i) => (
                                         <button
-                                            onClick={() => setSelectedServiceIdx(null)}
-                                            className="inline-flex items-center gap-2.5 mb-6 px-3.5 py-1.5 -ml-3.5 rounded-full text-brand-main hover:text-brand-dark hover:bg-brand-main/10 font-medium text-[15.5px] transition-all duration-200 group cursor-pointer"
-                                        >
-                                            <ArrowLeft size={20} strokeWidth={2.2} className="group-hover:-translate-x-1.5 transition-transform duration-200" />
-                                            <span>Volver a soluciones</span>
-                                        </button>
-
-                                        <div className="relative w-full">
-                                            {/* Left Navigation Button */}
-                                            <button
-                                                onClick={() => setActiveServiceIdx((p) => (p - 1 + servicesList.length) % servicesList.length)}
-                                                className="flex absolute left-2 md:-left-8 lg:-left-14 top-1/2 -translate-y-1/2 z-30 w-11 h-11 md:w-13 md:h-13 rounded-full bg-[#19354d] text-white items-center justify-center shadow-[0_4px_18px_rgba(25,53,77,0.35)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer"
-                                                aria-label="Anterior solución"
-                                            >
-                                                <ArrowLeft size={22} strokeWidth={2.2} className="text-white group-hover:-translate-x-0.5 transition-transform duration-300" />
-                                            </button>
-
-                                            {/* Right Navigation Button */}
-                                            <button
-                                                onClick={() => setActiveServiceIdx((p) => (p + 1) % servicesList.length)}
-                                                className="flex absolute right-2 md:-right-8 lg:-right-14 top-1/2 -translate-y-1/2 z-30 w-11 h-11 md:w-13 md:h-13 rounded-full bg-[#19354d] text-white items-center justify-center shadow-[0_4px_18px_rgba(25,53,77,0.35)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer"
-                                                aria-label="Siguiente solución"
-                                            >
-                                                <ArrowRight size={22} strokeWidth={2.2} className="text-white group-hover:translate-x-0.5 transition-transform duration-300" />
-                                            </button>
-
-                                            <div
-                                                className="relative h-[520px] sm:h-[600px] lg:h-[620px] w-full flex items-center justify-center perspective-1000 px-2 sm:px-4 md:px-8"
-                                            >
-                                                <AnimatePresence mode="popLayout">
-                                                    {servicesList.map((service, idx) => {
-                                                        if (idx !== activeServiceIdx)
-                                                            return null;
-                                                        return (
-                                                            <motion.div
-                                                                key={idx}
-                                                                initial={{
-                                                                    opacity: 0,
-                                                                    x: 200,
-                                                                    scale: 0.9,
-                                                                    filter: "blur(20px)",
-                                                                }}
-                                                                animate={{
-                                                                    opacity: 1,
-                                                                    x: 0,
-                                                                    scale: 1,
-                                                                    filter: "blur(0px)",
-                                                                }}
-                                                                exit={{
-                                                                    opacity: 0,
-                                                                    x: -200,
-                                                                    scale: 0.9,
-                                                                    filter: "blur(20px)",
-                                                                }}
-                                                                transition={{
-                                                                    duration: 0.5,
-                                                                    ease: "circOut",
-                                                                }}
-                                                                className="absolute inset-0 w-full h-full"
-                                                            >
-                                                                <div className="bg-white/80 backdrop-blur-3xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] rounded-[30px] md:rounded-[40px] overflow-hidden w-full h-full flex flex-col lg:flex-row relative group">
-                                                                    <div className="hidden absolute right-6 bottom-6 opacity-50">
-                                                                        <img
-                                                                            src="/assets/img/seguridad.webp"
-                                                                            className="w-48 object-contain select-none pointer-events-none"
-                                                                            alt="Placa de Seguridad de Autenticidad NGS"
-                                                                        />
-                                                                    </div>
-
-                                                                    {/* Image half */}
-                                                                    <div className="w-full lg:w-1/2 h-[220px] sm:h-[280px] lg:h-full shrink-0 relative overflow-hidden bg-gray-200">
-                                                                        <img
-                                                                            src={`/api/service/media/${service.image}`}
-                                                                            alt={service.title}
-                                                                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                                                                            onError={(e) =>
-                                                                            (e.target.src =
-                                                                                "/api/cover/thumbnail/null")
-                                                                            }
-                                                                        />
-                                                                        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent lg:hidden"></div>
-                                                                    </div>
-
-                                                                    {/* Content half */}
-                                                                    <div className="w-full lg:w-1/2 p-5 sm:p-6 md:p-10 lg:p-16 flex flex-col justify-center overflow-y-auto">
-                                                                        <h3 className="font-brinnan text-xl sm:text-2xl md:text-3xl lg:text-5xl font-light text-gray-900 mb-3 sm:mb-4 md:mb-6 leading-tight">
-                                                                            {service.title}
-                                                                        </h3>
-                                                                        <p className="text-gray-600 text-base md:text-lg font-light leading-relaxed mb-10">
-                                                                            {
-                                                                                service.description
-                                                                            }
-                                                                        </p>
-
-                                                                        {service
-                                                                            .characteristics
-                                                                            ?.length >
-                                                                            0 && (
-                                                                                <div className="space-y-4 mb-10 ">
-                                                                                    {service.characteristics.map(
-                                                                                        (
-                                                                                            char,
-                                                                                            i,
-                                                                                        ) => (
-                                                                                            <div
-                                                                                                key={
-                                                                                                    i
-                                                                                                }
-                                                                                                className="flex items-start gap-3"
-                                                                                            >
-                                                                                                <CheckCircle2
-                                                                                                    size={
-                                                                                                        18
-                                                                                                    }
-                                                                                                    className="text-brand-main mt-0.5 shrink-0"
-                                                                                                />
-                                                                                                <span className="text-gray-700 font-medium text-sm">
-                                                                                                    {
-                                                                                                        char
-                                                                                                    }
-                                                                                                </span>
-                                                                                            </div>
-                                                                                        ),
-                                                                                    )}
-                                                                                </div>
-                                                                            )}
-
-                                                                        <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-                                                                            <a
-                                                                                href="#contacto"
-                                                                                onClick={(e) => {
-                                                                                    e.preventDefault();
-                                                                                    scrollToTop();
-                                                                                }}
-                                                                                className="bg-brand-accent uppercase text-white px-8 py-4 rounded-full font-semibold hover:scale-105 duration-300 transition-all w-max text-xs  sm:text-sm tracking-wide shadow-md flex items-center gap-2"
-                                                                            >
-                                                                                Solicitar Cotización{" "}
-                                                                                <ArrowRight
-                                                                                    size={
-                                                                                        16
-                                                                                    }
-                                                                                />
-                                                                            </a>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </motion.div>
-                                                        );
-                                                    })}
-                                                </AnimatePresence>
-                                            </div>
-                                        </div>
-
-
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+                                            key={i}
+                                            onClick={() => {
+                                                setServiceDirection(i > activeServiceIdx ? 1 : -1);
+                                                setActiveServiceIdx(i);
+                                            }}
+                                            aria-label={`Ver solución ${i + 1}: ${s.title}`}
+                                            className={`transition-all duration-300 rounded-full cursor-pointer ${
+                                                activeServiceIdx === i
+                                                    ? "w-8 h-2.5 bg-brand-main"
+                                                    : "w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400"
+                                            }`}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </section>
                 )}
@@ -1282,17 +1144,117 @@ const Home = ({
                         />
                     </div>
 
-                    {/* Clientes que confiaron - Marquesina doble */}
-                    <ClientsMarquee
-                        title={
-                            <FormattedText
-                                text={aliados?.title || "Empresas que *confían en nosotros*"}
-                                boldClassName="font-bold text-brand-main"
-                            />
-                        }
-                        core_values={core_values}
-                        certifications={certifications}
-                    />
+                    {/* Dynamic Indicators bottom band - Modern High-Fidelity Cards (Design Proposal) */}
+                    <section id="indicadores" className="bg-transparent py-12 sm:py-14 lg:py-16 px-4 sm:px-6 md:px-12 w-full relative">
+                        <div className="max-w-[1400px] mx-auto relative z-10">
+                            {/* Indicators Container */}
+                            {indicatorsList && indicatorsList.length <= 4 ? (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-5 xl:gap-12">
+                                    {indicatorsList.map((ind, idx) => {
+                                        const proposalSvgIcons = [
+                                            { src: "/assets/img/escudo.svg", alt: "Escudo y Protección" },
+                                            { src: "/assets/img/ubicacion.svg", alt: "Ubicación y Cobertura" },
+                                            { src: "/assets/img/precision.svg", alt: "Precisión y Detección" },
+                                            { src: "/assets/img/soporte.svg", alt: "Soporte Especializado" },
+                                        ];
+
+                                        const renderProposalIcon = (index) => {
+                                            const icon = proposalSvgIcons[index % proposalSvgIcons.length];
+                                            return (
+                                                <img
+                                                    src={icon.src}
+                                                    alt={ind.name || icon.alt}
+                                                    className="w-8 h-8 sm:w-9 sm:h-9 object-contain select-none pointer-events-none"
+                                                />
+                                            );
+                                        };
+
+                                        return (
+                                            <div
+                                                key={idx}
+                                                className="w-full max-w-[320px] lg:max-w-none mx-auto bg-white rounded-[26px] sm:rounded-[30px] p-7 sm:p-8 xl:p-9 border border-[#e8f1f5] shadow-[0_4px_20px_rgba(0,0,0,0.03)] shadow-[0_8px_25px_rgba(12,35,49,0.06)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col items-center text-center justify-between group min-h-[250px]"
+                                            >
+                                                {/* Circular Icon Badge */}
+                                                <div className="w-16 h-16 sm:w-[70px] sm:h-[70px] rounded-full bg-[#eaf4fb] border border-[#d6ecf7] flex items-center justify-center mb-6 sm:mb-7 transition-transform duration-300 group-hover:scale-105 shrink-0 shadow-none">
+                                                    {renderProposalIcon(idx)}
+                                                </div>
+
+                                                {/* Metrics Number & Description */}
+                                                <div className="flex flex-col items-center flex-1 justify-center w-full">
+                                                    <h3 className="font-brinnan text-3xl sm:text-4xl lg:text-[2.35rem] xl:text-[2.5rem] font-bold text-[#0c2331] tracking-tight mb-2 sm:mb-2.5 leading-tight">
+                                                        {ind.name}
+                                                    </h3>
+
+                                                    <p className="text-[15px] sm:text-[16px] font-normal text-[#486581] leading-relaxed max-w-[240px] mx-auto">
+                                                        {ind.description}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <Swiper
+                                    modules={[Autoplay]}
+                                    slidesPerView={1}
+                                    loop={true}
+                                    autoplay={{
+                                        delay: 4500,
+                                        disableOnInteraction: false,
+                                    }}
+                                    className="w-full pb-4"
+                                >
+                                    {Array.from({ length: Math.ceil((indicatorsList?.length || 0) / 4) }, (_, i) => indicatorsList.slice(i * 4, i * 4 + 4)).map((chunk, slideIdx) => (
+                                        <SwiperSlide key={slideIdx} className="h-auto">
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-7 xl:gap-8 w-full">
+                                                {chunk.map((ind, idx) => {
+                                                    const globalIdx = slideIdx * 4 + idx;
+                                                    const proposalSvgIcons = [
+                                                        { src: "/assets/img/escudo.svg", alt: "Escudo y Protección" },
+                                                        { src: "/assets/img/ubicacion.svg", alt: "Ubicación y Cobertura" },
+                                                        { src: "/assets/img/precision.svg", alt: "Precisión y Detección" },
+                                                        { src: "/assets/img/soporte.svg", alt: "Soporte Especializado" },
+                                                    ];
+
+                                                    const renderProposalIcon = (index) => {
+                                                        const icon = proposalSvgIcons[index % proposalSvgIcons.length];
+                                                        return (
+                                                            <img
+                                                                src={icon.src}
+                                                                alt={ind.name || icon.alt}
+                                                                className="w-8 h-8 sm:w-9 sm:h-9 object-contain select-none pointer-events-none"
+                                                            />
+                                                        );
+                                                    };
+
+                                                    return (
+                                                        <div
+                                                            key={idx}
+                                                            className="w-full max-w-[320px] lg:max-w-none mx-auto bg-white rounded-[26px] sm:rounded-[30px] p-7 sm:p-8 xl:p-9 border border-[#e8f1f5] shadow-[0_4px_20px_rgba(0,0,0,0.03)] shadow-[0_8px_25px_rgba(12,35,49,0.06)] hover:-translate-y-0.5 transition-all duration-300 flex flex-col items-center text-center justify-between group min-h-[250px]"
+                                                        >
+                                                            <div className="w-16 h-16 sm:w-[70px] sm:h-[70px] rounded-full bg-[#eaf4fb] border border-[#d6ecf7] flex items-center justify-center mb-6 sm:mb-7 transition-transform duration-300 group-hover:scale-105 shrink-0 shadow-none">
+                                                                {renderProposalIcon(globalIdx)}
+                                                            </div>
+
+                                                            <div className="flex flex-col items-center flex-1 justify-center w-full">
+                                                                <h3 className="font-brinnan text-3xl sm:text-4xl lg:text-[2.35rem] xl:text-[2.5rem] font-bold text-[#0c2331] tracking-tight mb-2 sm:mb-2.5 leading-tight">
+                                                                    {ind.name}
+                                                                </h3>
+
+                                                                <p className="text-[15px] sm:text-[16px] font-normal text-[#486581] leading-relaxed max-w-[240px] mx-auto">
+                                                                    {ind.description}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </SwiperSlide>
+                                    ))}
+                                </Swiper>
+                            )}
+                        </div>
+                    </section>
 
                     {/* Products Section - Equipos más solicitados */}
                     <section

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Menu, X, Droplets } from "lucide-react";
 
 const navLinks = [
-    { id: "sectores", label: "Servicios" },
     { id: "clientes", label: "Clientes" },
+    { id: "sectores", label: "Servicios" },
     { id: "productos", label: "Productos" },
     { id: "testimonios", label: "Testimonios" },
 ];
