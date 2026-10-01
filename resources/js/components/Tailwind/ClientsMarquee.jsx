@@ -421,14 +421,18 @@ const ClientsMarquee = ({ title, core_values = [], certifications = [], classNam
                 .marquee-track-left {
                     display: flex;
                     width: max-content;
-                    animation: marquee-to-left 38s linear infinite;
+                    animation: marquee-to-left 32s linear infinite;
                     will-change: transform;
+                    backface-visibility: hidden;
+                    -webkit-backface-visibility: hidden;
                 }
                 .marquee-track-right {
                     display: flex;
                     width: max-content;
-                    animation: marquee-to-right 38s linear infinite;
+                    animation: marquee-to-right 32s linear infinite;
                     will-change: transform;
+                    backface-visibility: hidden;
+                    -webkit-backface-visibility: hidden;
                 }
                 .marquee-container:hover .marquee-track-left,
                 .marquee-container:hover .marquee-track-right {
@@ -454,9 +458,9 @@ const ClientsMarquee = ({ title, core_values = [], certifications = [], classNam
 
             {/* Marquee Wrapper with side fade gradients */}
             <div className="relative w-full overflow-hidden marquee-container py-2">
-                {/* Left and Right Smooth Gradient Masks */}
-                <div className="pointer-events-none absolute inset-y-0 left-0 w-20 sm:w-36 md:w-56 bg-gradient-to-r from-white via-white/80 to-transparent z-20" />
-                <div className="pointer-events-none absolute inset-y-0 right-0 w-20 sm:w-36 md:w-56 bg-gradient-to-l from-white via-white/80 to-transparent z-20" />
+                {/* Left and Right Smooth Gradient Masks (subtle and narrow so logos are immediately visible) */}
+                <div className="pointer-events-none absolute inset-y-0 left-0 w-8 sm:w-16 md:w-24 bg-gradient-to-r from-white to-transparent z-20" />
+                <div className="pointer-events-none absolute inset-y-0 right-0 w-8 sm:w-16 md:w-24 bg-gradient-to-l from-white to-transparent z-20" />
 
                 <div className="flex flex-col gap-6 sm:gap-9">
                     {/* Row 1: Moves to the LEFT */}
@@ -477,6 +481,8 @@ const ClientsMarquee = ({ title, core_values = [], certifications = [], classNam
                                                     : `/api/core_value/media/${item.image}`
                                             }
                                             alt={item.name || "Aliado"}
+                                            loading="eager"
+                                            decoding="async"
                                             className="max-h-10 sm:max-h-12 md:max-h-14 max-w-[130px] sm:max-w-[170px] w-auto object-contain transition-all duration-300 group-hover:scale-105"
                                             onError={(e) => {
                                                 e.target.src =
@@ -515,6 +521,8 @@ const ClientsMarquee = ({ title, core_values = [], certifications = [], classNam
                                                     : `/api/core_value/media/${item.image}`
                                             }
                                             alt={item.name || "Aliado"}
+                                            loading="eager"
+                                            decoding="async"
                                             className="max-h-10 sm:max-h-12 md:max-h-14 max-w-[130px] sm:max-w-[170px] w-auto object-contain transition-all duration-300 group-hover:scale-105"
                                             onError={(e) => {
                                                 e.target.src =

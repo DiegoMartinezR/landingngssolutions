@@ -29,14 +29,15 @@ import {
 
 const messagesRest = new MessagesRest();
 const useIsMobile = () => {
-    const [isMobile, setIsMobile] = useState(false);
+    const [isMobile, setIsMobile] = useState(() => {
+        return typeof window !== "undefined" ? window.innerWidth < 768 : false;
+    });
 
     useEffect(() => {
         const checkMobile = () => {
             setIsMobile(window.innerWidth < 768);
         };
 
-        checkMobile();
         window.addEventListener("resize", checkMobile);
         return () => window.removeEventListener("resize", checkMobile);
     }, []);
@@ -230,8 +231,11 @@ const Home = ({
     const [activeServiceIdx, setActiveServiceIdx] = useState(0);
     const [serviceDirection, setServiceDirection] = useState(1);
     const [productSwiper, setProductSwiper] = useState(null);
+    const [testimonySwiper, setTestimonySwiper] = useState(null);
     const isMobile = useIsMobile();
     const [loadVideo, setLoadVideo] = useState(true);
+    const heroVideoRef = useRef(null);
+    const [isVideoReady, setIsVideoReady] = useState(false);
     const handleProductQuote = (productName) => {
         setDetails(`Hola, deseo cotizar el producto: ${productName}`);
         scrollToSection("consulta", 1500);
@@ -568,70 +572,80 @@ const Home = ({
                 {/* Hero Section - 100% height on tablet and desktop */}
                 <section
                     id="consulta"
-                    className="relative w-full md:h-screen md:min-h-screen flex items-center md:flex-col md:justify-center bg-brand-dark overflow-hidden pt-20 sm:pt-24 md:pt-20 lg:pt-24 pb-8 sm:pb-10 md:pb-8"
+                    className="relative w-full md:h-screen md:min-h-screen flex items-center md:flex-col md:justify-center bg-brand-dark overflow-hidden pt-20 sm:pt-24 md:pt-20 lg:pt-24 pb-4 sm:pb-6 md:pb-8"
                 >
                     {/* Hero Background Video / Image - Seamless on both Mobile & Desktop */}
-                    <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
+                    <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none bg-brand-dark">
                         {(() => {
-                            const rawVideo = (isMobile && hero?.video_mobile) ? hero.video_mobile : (hero?.video || ((hero?.is_video === 1 || hero?.is_video === "1" || !hero?.image) ? "https://videos.pexels.com/video-files/6195526/6195526-hd_1920_1080_25fps.mp4" : null));
+                            let rawVideo = (isMobile && hero?.video_mobile) ? hero.video_mobile : (hero?.video || ((hero?.is_video === 1 || hero?.is_video === "1" || !hero?.image) ? "https://videos.pexels.com/video-files/6195526/6195526-hd_1920_1080_25fps.mp4" : null));
+                            if (rawVideo && typeof window !== "undefined") {
+                                if (rawVideo.includes("landing.groupngssolutions.com/videos/video/")) {
+                                    rawVideo = rawVideo.replace(/https?:\/\/landing\.groupngssolutions\.com/, "");
+                                } else if (!rawVideo.startsWith("http") && !rawVideo.startsWith("/")) {
+                                    rawVideo = `/api/landing_home/video/${rawVideo}`;
+                                }
+                            }
                             const isYouTube = rawVideo && (rawVideo.includes("youtube.com") || rawVideo.includes("youtu.be"));
                             const youtubeId = isYouTube ? (rawVideo.split("v=")[1]?.split("&")[0] || rawVideo.split("/").pop()) : null;
 
-                            if (isYouTube && youtubeId) {
-                                return (
-                                    <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-                                        <iframe
-                                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-[177.77vh] h-[56.25vw] max-w-none opacity-60"
-                                            src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
-                                            frameBorder="0"
-                                            allow="autoplay; fullscreen"
-                                        ></iframe>
-                                    </div>
-                                );
-                            }
-
-                            if (rawVideo) {
-                                return (
-                                    <video
-                                        key={rawVideo}
-                                        src={rawVideo}
-                                        autoPlay
-                                        loop
-                                        muted
-                                        playsInline
-                                        preload="auto"
-                                        className="w-full h-full object-cover opacity-100 pointer-events-none"
-                                    />
-                                );
-                            }
-
                             const bgImage = (isMobile && hero?.image_mobile)
                                 ? `/api/landing_home/media/${hero.image_mobile}`
-                                : (hero?.image ? `/api/landing_home/media/${hero.image}` : null);
-
-                            if (bgImage) {
-                                return (
-                                    <img
-                                        src={bgImage}
-                                        alt="Hero Background"
-                                        className="w-full h-full object-cover opacity-60 pointer-events-none"
-                                        onError={(e) => {
-                                            e.target.style.display = "none";
-                                        }}
-                                    />
-                                );
-                            }
+                                : (hero?.image ? `/api/landing_home/media/${hero.image}` : "/assets/img/seguridad.webp");
 
                             return (
-                                <video
-                                    src="https://videos.pexels.com/video-files/6195526/6195526-hd_1920_1080_25fps.mp4"
-                                    autoPlay
-                                    loop
-                                    muted
-                                    playsInline
-                                    preload="auto"
-                                    className="w-full h-full object-cover opacity-100 pointer-events-none"
-                                />
+                                <>
+                                    {/* Capa de imagen de póster inmediata (0ms) para evitar vacío o pantalla negra en mobile mientras el video carga */}
+                                    {bgImage && !isYouTube && (
+                                        <img
+                                            src={bgImage}
+                                            alt="Hero Background Poster"
+                                            fetchPriority="high"
+                                            className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-700 ${isVideoReady ? "opacity-0" : "opacity-60"
+                                                }`}
+                                            onError={(e) => {
+                                                e.target.style.display = "none";
+                                            }}
+                                        />
+                                    )}
+
+                                    {isYouTube && youtubeId ? (
+                                        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
+                                            <iframe
+                                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full w-[177.77vh] h-[56.25vw] max-w-none opacity-60"
+                                                src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1&mute=1&loop=1&playlist=${youtubeId}&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1`}
+                                                frameBorder="0"
+                                                allow="autoplay; fullscreen"
+                                            ></iframe>
+                                        </div>
+                                    ) : rawVideo ? (
+                                        <video
+                                            ref={heroVideoRef}
+                                            key={rawVideo}
+                                            src={rawVideo}
+                                            autoPlay
+                                            loop
+                                            muted
+                                            defaultMuted
+                                            playsInline
+                                            preload="auto"
+                                            poster={bgImage || undefined}
+                                            onLoadedData={() => setIsVideoReady(true)}
+                                            onPlaying={() => setIsVideoReady(true)}
+                                            onCanPlay={() => setIsVideoReady(true)}
+                                            className={`absolute inset-0 w-full h-full object-cover pointer-events-none transition-opacity duration-700 ${isVideoReady ? "opacity-100" : "opacity-0"
+                                                }`}
+                                        />
+                                    ) : bgImage ? (
+                                        <img
+                                            src={bgImage}
+                                            alt="Hero Background"
+                                            className="w-full h-full object-cover opacity-60 pointer-events-none"
+                                            onError={(e) => {
+                                                e.target.style.display = "none";
+                                            }}
+                                        />
+                                    ) : null}
+                                </>
                             );
                         })()}
                         {/* Overlay para legibilidad del contenido */}
@@ -774,7 +788,7 @@ const Home = ({
                 </section>
 
                 {/* Mobile Form Section - displays form below hero on mobile screens */}
-                <section className="lg:hidden bg-brand-dark pt-0 pb-8 sm:py-10 px-4 sm:px-6">
+                <section className="lg:hidden bg-brand-dark py-8 sm:py-10 px-4 sm:px-6">
                     <div className="max-w-lg mx-auto">
                         <div
                             className="w-full relative shadow-[0_20px_50px_rgba(26,60,52,0.1)]"
@@ -892,7 +906,7 @@ const Home = ({
                 {servicesList && servicesList.length > 0 && (
                     <section
                         id="sectores"
-                        className="pb-16 pt-8 px-4 sm:px-6 md:px-12 bg-white relative w-full"
+                        className="pb-8 pt-8 px-4 sm:px-6 md:px-12 bg-white relative w-full"
                     >
                         <div className="max-w-[1400px] mx-auto px-4 md:px-12 outline-none focus:outline-none">
                             {/* Section Header */}
@@ -916,7 +930,7 @@ const Home = ({
 
                             {/* Detail Carousel View */}
                             <div className="relative w-full">
-                                {/* Desktop/Tablet Navigation Buttons */}
+                                {/* Navigation Buttons at sides (laterales y en el centro) */}
                                 <button
                                     onClick={() => {
                                         setServiceDirection(-1);
@@ -926,13 +940,12 @@ const Home = ({
                                                 servicesList.length,
                                         );
                                     }}
-                                    className="hidden md:flex absolute -left-5 lg:-left-12 top-1/2 -translate-y-1/2 z-30 w-11 h-11 md:w-13 md:h-13 rounded-full bg-[#19354d] text-white items-center justify-center shadow-[0_4px_18px_rgba(25,53,77,0.35)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer"
+                                    className="flex absolute -left-7 sm:-left-8 md:-left-12 lg:-left-16 xl:-left-20 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-11 sm:h-11 md:w-13 md:h-13 rounded-full bg-[#19354d] text-white border border-white/20 items-center justify-center shadow-[0_6px_22px_rgba(25,53,77,0.4)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer backdrop-blur-sm"
                                     aria-label="Anterior solución"
                                 >
                                     <ArrowLeft
-                                        size={22}
                                         strokeWidth={2.2}
-                                        className="text-white group-hover:-translate-x-0.5 transition-transform duration-300"
+                                        className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white group-hover:-translate-x-0.5 transition-transform duration-300"
                                     />
                                 </button>
 
@@ -943,17 +956,16 @@ const Home = ({
                                             (p) => (p + 1) % servicesList.length,
                                         );
                                     }}
-                                    className="hidden md:flex absolute -right-5 lg:-right-12 top-1/2 -translate-y-1/2 z-30 w-11 h-11 md:w-13 md:h-13 rounded-full bg-[#19354d] text-white items-center justify-center shadow-[0_4px_18px_rgba(25,53,77,0.35)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer"
+                                    className="flex absolute -right-7 sm:-right-8 md:-right-12 lg:-right-16 xl:-right-20 top-1/2 -translate-y-1/2 z-30 w-10 h-10 sm:w-11 sm:h-11 md:w-13 md:h-13 rounded-full bg-[#19354d] text-white border border-white/20 items-center justify-center shadow-[0_6px_22px_rgba(25,53,77,0.4)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer backdrop-blur-sm"
                                     aria-label="Siguiente solución"
                                 >
                                     <ArrowRight
-                                        size={22}
                                         strokeWidth={2.2}
-                                        className="text-white group-hover:translate-x-0.5 transition-transform duration-300"
+                                        className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white group-hover:translate-x-0.5 transition-transform duration-300"
                                     />
                                 </button>
 
-                                <div className="relative min-h-[590px] sm:min-h-[580px] lg:h-[600px] xl:h-[620px] w-full flex items-center justify-center perspective-1000 px-1 sm:px-4 md:px-8">
+                                <div className="relative min-h-[520px] sm:min-h-[580px] lg:h-[600px] xl:h-[620px] w-full flex items-center justify-center perspective-1000 px-2 sm:px-5 md:px-8">
                                     <AnimatePresence mode="popLayout" custom={serviceDirection}>
                                         {servicesList.map((service, idx) => {
                                             if (idx !== activeServiceIdx) return null;
@@ -961,6 +973,20 @@ const Home = ({
                                                 <motion.div
                                                     key={idx}
                                                     custom={serviceDirection}
+                                                    drag="x"
+                                                    dragConstraints={{ left: 0, right: 0 }}
+                                                    dragElastic={0.25}
+                                                    onDragEnd={(_, info) => {
+                                                        const swipeThreshold = 40;
+                                                        const velocityThreshold = 250;
+                                                        if (info.offset.x < -swipeThreshold || info.velocity.x < -velocityThreshold) {
+                                                            setServiceDirection(1);
+                                                            setActiveServiceIdx((p) => (p + 1) % servicesList.length);
+                                                        } else if (info.offset.x > swipeThreshold || info.velocity.x > velocityThreshold) {
+                                                            setServiceDirection(-1);
+                                                            setActiveServiceIdx((p) => (p - 1 + servicesList.length) % servicesList.length);
+                                                        }
+                                                    }}
                                                     initial={{
                                                         opacity: 0,
                                                         x: serviceDirection > 0 ? 140 : -140,
@@ -983,7 +1009,7 @@ const Home = ({
                                                         duration: 0.4,
                                                         ease: "circOut",
                                                     }}
-                                                    className="absolute inset-0 w-full h-full"
+                                                    className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing select-none"
                                                 >
                                                     <div className="bg-white/90 backdrop-blur-3xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-[#e8f1f5] rounded-[24px] sm:rounded-[30px] md:rounded-[40px] overflow-hidden w-full h-full flex flex-col lg:flex-row relative group">
                                                         {/* Image half */}
@@ -992,19 +1018,19 @@ const Home = ({
                                                                 src={
                                                                     service.image
                                                                         ? (service.image.startsWith("http") ||
-                                                                          service.image.startsWith("/")
+                                                                            service.image.startsWith("/")
                                                                             ? service.image
                                                                             : `/api/service/media/${service.image}`)
                                                                         : "/api/cover/thumbnail/null"
                                                                 }
                                                                 alt={service.title}
-                                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                                                                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 pointer-events-none"
                                                                 onError={(e) =>
-                                                                    (e.target.src =
-                                                                        "/api/cover/thumbnail/null")
+                                                                (e.target.src =
+                                                                    "/api/cover/thumbnail/null")
                                                                 }
                                                             />
-                                                            <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent lg:hidden" />
+                                                            <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent lg:hidden pointer-events-none" />
                                                         </div>
 
                                                         {/* Content half */}
@@ -1025,28 +1051,28 @@ const Home = ({
 
                                                                 {service.characteristics?.length >
                                                                     0 && (
-                                                                    <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 md:mb-8">
-                                                                        {service.characteristics.map(
-                                                                            (char, i) => (
-                                                                                <div
-                                                                                    key={i}
-                                                                                    className="flex items-start gap-2.5 sm:gap-3"
-                                                                                >
-                                                                                    <CheckCircle2
-                                                                                        size={16}
-                                                                                        className="text-brand-main mt-0.5 shrink-0 sm:w-[18px] sm:h-[18px]"
-                                                                                    />
-                                                                                    <span className="text-gray-700 font-medium text-xs sm:text-sm leading-tight sm:leading-normal">
-                                                                                        {char}
-                                                                                    </span>
-                                                                                </div>
-                                                                            ),
-                                                                        )}
-                                                                    </div>
-                                                                )}
+                                                                        <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6 md:mb-8">
+                                                                            {service.characteristics.map(
+                                                                                (char, i) => (
+                                                                                    <div
+                                                                                        key={i}
+                                                                                        className="flex items-start gap-2.5 sm:gap-3"
+                                                                                    >
+                                                                                        <CheckCircle2
+                                                                                            size={16}
+                                                                                            className="text-brand-main mt-0.5 shrink-0 sm:w-[18px] sm:h-[18px]"
+                                                                                        />
+                                                                                        <span className="text-gray-700 font-medium text-xs sm:text-sm leading-tight sm:leading-normal">
+                                                                                            {char}
+                                                                                        </span>
+                                                                                    </div>
+                                                                                ),
+                                                                            )}
+                                                                        </div>
+                                                                    )}
                                                             </div>
 
-                                                            <div className="flex flex-wrap justify-start gap-4 pt-1 sm:pt-0">
+                                                            <div className="flex flex-wrap justify-start gap-4 pt-1 sm:pt-0 pointer-events-auto">
                                                                 <a
                                                                     href="#consulta"
                                                                     onClick={(e) => {
@@ -1067,47 +1093,22 @@ const Home = ({
                                     </AnimatePresence>
                                 </div>
 
-                                {/* Mobile Navigation Controls (Arrows + Dots) */}
-                                <div className="flex md:hidden items-center justify-between w-full max-w-[280px] mx-auto mt-6">
-                                    <button
-                                        onClick={() => {
-                                            setServiceDirection(-1);
-                                            setActiveServiceIdx((p) => (p - 1 + servicesList.length) % servicesList.length);
-                                        }}
-                                        className="w-10 h-10 rounded-full bg-[#19354d] text-white flex items-center justify-center shadow-[0_4px_12px_rgba(25,53,77,0.25)] active:scale-95 transition-all cursor-pointer"
-                                        aria-label="Anterior solución"
-                                    >
-                                        <ArrowLeft size={18} strokeWidth={2.2} />
-                                    </button>
-
-                                    <div className="flex items-center gap-2">
-                                        {servicesList.map((s, i) => (
-                                            <button
-                                                key={i}
-                                                onClick={() => {
-                                                    setServiceDirection(i > activeServiceIdx ? 1 : -1);
-                                                    setActiveServiceIdx(i);
-                                                }}
-                                                aria-label={`Ver solución ${i + 1}: ${s.title}`}
-                                                className={`transition-all duration-300 rounded-full cursor-pointer ${
-                                                    activeServiceIdx === i
-                                                        ? "w-7 h-2.5 bg-brand-main"
-                                                        : "w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400"
+                                {/* Mobile Pagination Dots */}
+                                <div className="flex md:hidden justify-center items-center gap-2 mt-6">
+                                    {servicesList.map((s, i) => (
+                                        <button
+                                            key={i}
+                                            onClick={() => {
+                                                setServiceDirection(i > activeServiceIdx ? 1 : -1);
+                                                setActiveServiceIdx(i);
+                                            }}
+                                            aria-label={`Ver solución ${i + 1}: ${s.title}`}
+                                            className={`transition-all duration-300 rounded-full cursor-pointer ${activeServiceIdx === i
+                                                ? "w-7 h-2.5 bg-brand-main"
+                                                : "w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400"
                                                 }`}
-                                            />
-                                        ))}
-                                    </div>
-
-                                    <button
-                                        onClick={() => {
-                                            setServiceDirection(1);
-                                            setActiveServiceIdx((p) => (p + 1) % servicesList.length);
-                                        }}
-                                        className="w-10 h-10 rounded-full bg-[#19354d] text-white flex items-center justify-center shadow-[0_4px_12px_rgba(25,53,77,0.25)] active:scale-95 transition-all cursor-pointer"
-                                        aria-label="Siguiente solución"
-                                    >
-                                        <ArrowRight size={18} strokeWidth={2.2} />
-                                    </button>
+                                        />
+                                    ))}
                                 </div>
 
                                 {/* Desktop Pagination Dots */}
@@ -1120,11 +1121,10 @@ const Home = ({
                                                 setActiveServiceIdx(i);
                                             }}
                                             aria-label={`Ver solución ${i + 1}: ${s.title}`}
-                                            className={`transition-all duration-300 rounded-full cursor-pointer ${
-                                                activeServiceIdx === i
-                                                    ? "w-8 h-2.5 bg-brand-main"
-                                                    : "w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400"
-                                            }`}
+                                            className={`transition-all duration-300 rounded-full cursor-pointer ${activeServiceIdx === i
+                                                ? "w-8 h-2.5 bg-brand-main"
+                                                : "w-2.5 h-2.5 bg-gray-300 hover:bg-gray-400"
+                                                }`}
                                         />
                                     ))}
                                 </div>
@@ -1259,9 +1259,9 @@ const Home = ({
                     {/* Products Section - Equipos más solicitados */}
                     <section
                         id="productos"
-                        className="pb-16 pt-10 px-4 sm:px-6 md:px-12 relative w-full overflow-hidden bg-transparent"
+                        className="pb-10 pt-10 px-4 sm:px-6 md:px-12 relative w-full overflow-hidden bg-transparent"
                     >
-                        <div className="max-w-[1400px] mx-auto px-4 md:px-12 relative z-10">
+                        <div className="max-w-[1400px] mx-auto relative z-10">
                             {/* Section Header */}
                             <ScrollReveal direction="up" staggerDelay={0.15}>
                                 <div className="mb-10 sm:mb-12 max-w-3xl">
@@ -1293,19 +1293,19 @@ const Home = ({
                                 {/* Previous Button */}
                                 <button
                                     onClick={() => productSwiper?.slidePrev()}
-                                    className="hidden sm:flex absolute -left-3 md:-left-6 lg:-left-7 top-1/2 -translate-y-1/2 z-30 w-11 h-11 md:w-12 md:h-12 rounded-full bg-white shadow-[0_4px_20px_rgba(0,0,0,0.12)] border border-gray-100 items-center justify-center text-[#19354d] hover:text-[#38a3c8] hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer"
+                                    className="flex absolute -left-2 sm:-left-3 md:-left-6 lg:-left-7 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-[#19354d] text-white border border-white/20 items-center justify-center shadow-[0_6px_22px_rgba(25,53,77,0.4)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer backdrop-blur-sm"
                                     aria-label="Anterior equipo"
                                 >
-                                    <ChevronLeft size={22} strokeWidth={2.5} />
+                                    <ChevronLeft size={18} strokeWidth={2.5} className="sm:w-[22px] sm:h-[22px] text-white group-hover:-translate-x-0.5 transition-transform duration-300" />
                                 </button>
 
                                 {/* Next Button */}
                                 <button
                                     onClick={() => productSwiper?.slideNext()}
-                                    className="hidden sm:flex absolute -right-3 md:-right-6 lg:-right-7 top-1/2 -translate-y-1/2 z-30 w-11 h-11 md:w-12 md:h-12 rounded-full bg-white shadow-[0_4px_20px_rgba(0,0,0,0.12)] border border-gray-100 items-center justify-center text-[#19354d] hover:text-[#38a3c8] hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer"
+                                    className="flex absolute -right-2 sm:-right-3 md:-right-6 lg:-right-7 top-1/2 -translate-y-1/2 z-30 w-9 h-9 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full bg-[#19354d] text-white border border-white/20 items-center justify-center shadow-[0_6px_22px_rgba(25,53,77,0.4)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer backdrop-blur-sm"
                                     aria-label="Siguiente equipo"
                                 >
-                                    <ChevronRight size={22} strokeWidth={2.5} />
+                                    <ChevronRight size={18} strokeWidth={2.5} className="sm:w-[22px] sm:h-[22px] text-white group-hover:translate-x-0.5 transition-transform duration-300" />
                                 </button>
 
                                 {/* Swiper Carousel */}
@@ -1313,13 +1313,12 @@ const Home = ({
                                     modules={[Autoplay]}
                                     onSwiper={setProductSwiper}
                                     spaceBetween={20}
-                                    slidesPerView={1.15}
-                                    centeredSlides={isMobile}
+                                    slidesPerView={1}
                                     autoplay={{ delay: 6000, disableOnInteraction: true }}
                                     breakpoints={{
-                                        640: { slidesPerView: 2, spaceBetween: 24, centeredSlides: false },
-                                        1024: { slidesPerView: 3, spaceBetween: 28, centeredSlides: false },
-                                        1280: { slidesPerView: 3, spaceBetween: 32, centeredSlides: false },
+                                        640: { slidesPerView: 2, spaceBetween: 24 },
+                                        1024: { slidesPerView: 3, spaceBetween: 28 },
+                                        1280: { slidesPerView: 3, spaceBetween: 32 },
                                     }}
                                     className="overflow-hidden py-4"
                                 >
@@ -1396,7 +1395,7 @@ const Home = ({
                                             return (
                                                 <SwiperSlide key={idx} className="h-auto pb-4 pr-2 pt-1 pl-1">
                                                     <div
-                                                        className="relative group h-full cursor-pointer select-none"
+                                                        className="w-full max-w-[320px] sm:max-w-none mx-auto relative group h-full cursor-pointer select-none"
                                                         onClick={() => handleProductQuote(item.name)}
                                                     >
                                                         {/* Offset backing layer (high-tech EAS hardware cut) - static without shadow expansion */}
@@ -2009,10 +2008,10 @@ const Home = ({
                     )}
                     {/* Testimonials Section */}
                     {transformation && testimonials.length > 0 && (
-                        <section id="testimonios" className="pb-10 pt-8 relative overflow-hidden w-full bg-transparent">
+                        <section id="testimonios" className="pb-10 lg:pt-8 relative overflow-hidden w-full bg-transparent">
 
                             <div className="max-w-[1400px] mx-auto px-4 md:px-12 relative z-10">
-                                <ScrollReveal direction="up" staggerDelay={0.1} className="max-w-3xl mb-10 sm:mb-12">
+                                <ScrollReveal direction="up" staggerDelay={0.1} className="max-w-3xl lg:mb-12">
                                     <h2 className="font-brinnan text-3xl sm:text-4xl md:text-5xl font-light text-brand-dark tracking-tight leading-tight">
                                         <FormattedText
                                             text={transformation.title || "Lo que dicen *nuestros clientes*"}
@@ -2022,6 +2021,23 @@ const Home = ({
                                 </ScrollReveal>
 
                                 <div className="relative w-full">
+                                    {/* Mobile Navigation Buttons (Solo para versión mobile) */}
+                                    <button
+                                        onClick={() => testimonySwiper?.slidePrev()}
+                                        className="flex md:hidden absolute -left-2 sm:-left-3 top-[44%] -translate-y-1/2 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#19354d] text-white border border-white/20 items-center justify-center shadow-[0_6px_22px_rgba(25,53,77,0.4)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer backdrop-blur-sm"
+                                        aria-label="Anterior testimonio"
+                                    >
+                                        <ChevronLeft size={18} strokeWidth={2.5} className="text-white group-hover:-translate-x-0.5 transition-transform duration-300" />
+                                    </button>
+
+                                    <button
+                                        onClick={() => testimonySwiper?.slideNext()}
+                                        className="flex md:hidden absolute -right-2 sm:-right-3 top-[44%] -translate-y-1/2 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#19354d] text-white border border-white/20 items-center justify-center shadow-[0_6px_22px_rgba(25,53,77,0.4)] hover:bg-[#12283a] hover:scale-110 active:scale-95 transition-all duration-300 group cursor-pointer backdrop-blur-sm"
+                                        aria-label="Siguiente testimonio"
+                                    >
+                                        <ChevronRight size={18} strokeWidth={2.5} className="text-white group-hover:translate-x-0.5 transition-transform duration-300" />
+                                    </button>
+
                                     {/* Gradient Overlays for smooth side fade-out */}
                                     <div className="absolute left-0 top-0 bottom-0 w-8 md:w-20 bg-gradient-to-r from-white via-white/40 to-transparent z-20 pointer-events-none"></div>
 
@@ -2057,6 +2073,7 @@ const Home = ({
 
                                     <Swiper
                                         modules={[Autoplay, Pagination]}
+                                        onSwiper={setTestimonySwiper}
                                         pagination={{
                                             clickable: true,
                                         }}

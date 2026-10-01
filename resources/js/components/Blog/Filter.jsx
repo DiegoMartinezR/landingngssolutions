@@ -103,7 +103,6 @@ const Filter = ({ categories, filter, setFilter, landing }) => {
                 <motion.label
                     htmlFor="txt-search"
                     className="col-span-1 md:col-span-1 lg:col-span-2 px-6 py-4 flex items-center rounded-3xl bg-white"
-                    variants={itemVariants}
                     whileHover={{ y: -3 }}
                     whileFocus="focus"
                     variants={inputFocus}
@@ -155,7 +154,6 @@ const Filter = ({ categories, filter, setFilter, landing }) => {
                                             : item.id,
                                 }))
                             }
-                            variants={itemVariants}
                             whileHover="hover"
                             whileTap="tap"
                             variants={buttonHover}
